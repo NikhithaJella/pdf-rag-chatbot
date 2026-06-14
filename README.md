@@ -165,28 +165,13 @@ Response:
 
 ---
 
-## Deployment
+## Known Limitations (Free Tier)
 
-### Backend → Render (free)
-
-1. Go to [render.com](https://render.com) and sign in with GitHub
-2. Click **New → Blueprint** and select this repo — Render auto-detects `render.yaml`
-3. In the Render dashboard, add environment variables:
-   - `FEATHERLESS_API_KEY` — your Featherless AI key
-   - `TAVILY_API_KEY` — your Tavily key
-   - `ALLOWED_ORIGINS` — your frontend URL (fill this in after step below)
-4. Click **Deploy** — your backend URL will be `https://documind-backend.onrender.com`
-
-### Frontend → Vercel (free)
-
-1. Go to [vercel.com](https://vercel.com) and sign in with GitHub
-2. Click **Add New → Project** and import this repo
-3. Set **Root Directory** to `frontend`
-4. Add environment variable:
-   - `VITE_API_BASE_URL` = `https://documind-backend.onrender.com` (your Render URL)
-   - `NITRO_PRESET` = `vercel`
-5. Click **Deploy** — your app will be live at `https://your-app.vercel.app`
-6. Go back to Render and update `ALLOWED_ORIGINS` to your Vercel URL, then redeploy
+| Limitation | Detail |
+|---|---|
+| Cold start delay | The Render free instance sleeps after 15 min of inactivity. First request after a break takes **~50 seconds** to wake up. |
+| PDF size | ChromaDB loads a ~300 MB embedding model on first ingest. On the free 512 MB tier, keep PDFs **under ~10 pages**. Larger PDFs may cause the server to crash with an out-of-memory error. |
+| Workaround | Upgrade to Render's $7/month plan (1 GB RAM) to handle any PDF size without restrictions. |
 
 ---
 
