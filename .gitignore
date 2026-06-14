@@ -37,6 +37,6 @@ frontend/.env.local
 frontend/.vite/
 
 # OS / editor junk
-*.txt
+New Text Document.txt
 .DS_Store
 Thumbs.db
