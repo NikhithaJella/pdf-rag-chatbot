@@ -1,0 +1,8 @@
+pypdf
+chromadb
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+openai
+tavily-python
