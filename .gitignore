@@ -36,6 +36,9 @@ frontend/.env
 frontend/.env.local
 frontend/.vite/
 
+# Private notes
+PROJECT_CONTEXT.txt
+
 # OS / editor junk
 New Text Document.txt
 .DS_Store
