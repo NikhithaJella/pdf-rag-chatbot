@@ -1,5 +1,7 @@
 # DocuMind AI — PDF RAG Chatbot
 
+**[🚀 Live Demo](https://pdf-rag-chatbot-pi.vercel.app)**
+
 A full-stack RAG (Retrieval-Augmented Generation) chatbot that lets you upload any PDF and ask questions about it in natural language. When the PDF doesn't contain the answer, it automatically falls back to a live web search.
 
 ---
