@@ -55,11 +55,11 @@ class IngestResponse(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    engine = HybridRAGEngine(pdf_paths=["sample.pdf"])
-    engine.setup_pipeline(reset=False)
+    # Start with no PDF loaded — engine is ready but empty.
+    # Users must call /api/ingest before chatting.
+    engine = HybridRAGEngine(pdf_paths=[])
     app.state.engine = engine
     yield
-    # nothing to clean up on shutdown
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +228,15 @@ async def chat(payload: ChatRequest, request: Request):
 
     if not payload.question.strip():
         raise HTTPException(status_code=400, detail="question must not be empty")
+
+    if engine.collection is None:
+        return ChatResponse(
+            answer="No document has been loaded yet. Please upload and index a PDF using the sidebar first.",
+            citations=[],
+            web_search_triggered=False,
+            source_type="pdf_not_found",
+            web_sources=[],
+        )
 
     reranked_chunks = engine.retrieve(payload.question)
     answer_text, selected_chunks, validation, tavily_triggered = engine.answer(
