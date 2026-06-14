@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: documind-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: FEATHERLESS_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: TAVILY_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: ALLOWED_ORIGINS
+        sync: false          # set to your Vercel frontend URL after deploy

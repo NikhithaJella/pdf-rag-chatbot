@@ -1,3 +1,0 @@
-pypdf
-chromadb
-google-genai
