@@ -1,0 +1,46 @@
+name: Project Structure Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check README exists
+        run: test -f README.md
+
+      - name: Check backend files exist
+        run: |
+          test -f backend/server.py
+          test -f backend/read_pdf_bm25_structured.py
+          test -f backend/requirements.txt
+
+      - name: Check docs exist
+        run: |
+          test -f docs/ARCHITECTURE.md
+          test -f docs/RAG_PIPELINE.md
+
+      - name: Check test plan exists
+        run: test -f tests/README.md
+
+      - name: Validate Python requirements are not empty
+        run: |
+          [ -s backend/requirements.txt ] || { echo "requirements.txt is empty"; exit 1; }
+
+      - name: Check key dependencies listed
+        run: |
+          grep -q "fastapi" backend/requirements.txt
+          grep -q "chromadb" backend/requirements.txt
+          grep -q "pypdf" backend/requirements.txt
+          grep -q "uvicorn" backend/requirements.txt
+
+      - name: Verify no secrets committed
+        run: |
+          ! grep -rn "FEATHERLESS_API_KEY\s*=" --include="*.py" backend/ || true
+          test ! -f backend/.env

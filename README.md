@@ -60,6 +60,14 @@ rag-pdf-chatbot/
 │   │   └── routes/index.tsx        # Main chat UI
 │   ├── package.json
 │   └── .env.example
+├── docs/
+│   ├── ARCHITECTURE.md             # System design and component breakdown
+│   └── RAG_PIPELINE.md            # Step-by-step retrieval flow
+├── tests/
+│   └── README.md                   # Manual test plan and checklist
+├── .github/
+│   └── workflows/
+│       └── project-check.yml       # CI: validates structure, deps, no secrets
 ├── render.yaml                     # One-click backend deploy config for Render
 └── README.md
 ```
@@ -193,6 +201,59 @@ Response:
 |---|---|---|
 | `VITE_API_BASE_URL` | Production | Deployed backend URL |
 | `NITRO_PRESET` | Vercel deploy | Set to `vercel` when deploying to Vercel |
+
+---
+
+## Documentation
+
+- [Architecture Overview](docs/ARCHITECTURE.md) — system design, component breakdown, and design decisions
+- [RAG Pipeline](docs/RAG_PIPELINE.md) — step-by-step retrieval flow from PDF ingestion to answer generation
+- [Manual Test Plan](tests/README.md) — checklist for verifying upload, chat, citations, and web fallback
+
+---
+
+## Demo
+
+**Live app:** [https://pdf-rag-chatbot-pi.vercel.app](https://pdf-rag-chatbot-pi.vercel.app)
+
+**Backend API:** `https://documind-backend-xzwd.onrender.com`
+
+> The Render free tier sleeps after 15 min of inactivity. The first request after a break takes ~50 seconds. Give it a moment.
+
+### Quick demo script
+
+1. Open the live app link above
+2. Upload any research paper or multi-page PDF (keep under ~10 pages on the free tier)
+3. Wait for "X chunks indexed and ready to query"
+4. Ask: **"What are the main findings?"** → see PDF citations (indigo pills)
+5. Ask: **"Summarize this document"** → see a multi-section summary
+6. Ask: **"What is the capital of France?"** → see the web search fallback with clickable sources
+
+### Backend Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/upload` | Upload a PDF file (multipart form) |
+| `POST` | `/api/ingest` | Build the RAG index for uploaded PDF(s) |
+| `POST` | `/api/chat` | Ask a question, get an answer with citations |
+
+---
+
+## Buildathon — RAG Track Relevance
+
+This project demonstrates a complete RAG pipeline built from scratch:
+
+- **Retrieval:** Hybrid vector (ChromaDB) + keyword (BM25) search with query expansion and synonym matching
+- **Augmentation:** Top-5 reranked chunks are injected as context into the LLM prompt with strict grounding instructions
+- **Generation:** Meta-Llama-3.1-8B produces cited answers; citations are validated against the actual evidence chunks
+- **Fallback:** Automatic Tavily web search when the PDF lacks the answer, with transparent source attribution
+
+Key differentiators from a basic RAG tutorial:
+- Custom multi-signal reranker (vector score + BM25 + intent + section boost − reference penalty)
+- Section-aware chunking with academic header detection
+- Citation hallucination detection
+- Defensive 3-route answer routing (PDF → web → not found)
+- Fully deployed: React frontend on Vercel, FastAPI backend on Render, auto-deploy from GitHub
 
 ---
 
